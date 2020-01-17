@@ -1,5 +1,5 @@
 ﻿# Overview
-#### The nine books of Hadith:
+#### An API to retrieve hadith of nine famous books:
 
 |  Book 	|  Hadith count 	|
 |---	|---	|
@@ -13,6 +13,12 @@
 |    Sunan Darimi	|   3367	|
 |   	Musnad Ahmad|   26363	|
 
+
+# Development
+
+* Extract database file from "src/Api/Data/SunnahDb.rar" in the same directory, it was compressed because it exceeded github file size limit. 
+* Api was built using Visual Studio Community 2019 Version 16.4.0, .net core 3.1, SQLite.
+* Download [SQLite & SQL Server Compact Toolbox extension](https://marketplace.visualstudio.com/items?itemName=ErikEJ.SQLServerCompactSQLiteToolbox) to access SQLite database from visual studio.
 
 ## Routes
 ### `GET /books`
