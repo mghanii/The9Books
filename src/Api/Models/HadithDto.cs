@@ -1,4 +1,4 @@
-﻿namespace Tasaneef.Models
+﻿namespace The9Books.Models
 {
     public class HadithDto
     {

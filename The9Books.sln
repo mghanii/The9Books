@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tasaneef", "src\Api\Tasaneef.csproj", "{0C2F3AF7-8B65-48E3-B6AA-E1412BED340A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "The9Books", "src\Api\The9Books.csproj", "{0C2F3AF7-8B65-48E3-B6AA-E1412BED340A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

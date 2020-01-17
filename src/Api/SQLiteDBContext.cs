@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Tasaneef.Models;
+using The9Books.Models;
 
-namespace Tasaneef
+namespace The9Books
 {
     public interface IDBContext
     {

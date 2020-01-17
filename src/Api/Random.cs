@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tasaneef
+namespace The9Books
 {
     public interface IRandom
     {
