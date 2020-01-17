@@ -16,12 +16,12 @@ namespace The9Books.Controllers
         private readonly IRandom _random;
 
         private static readonly Dictionary<string, int> HadithCount = new Dictionary<string, int>{
-                                                     {"abodawud", 4590 }
-                                                    ,{"aldarimi",3367 }
-                                                    ,{"alnasai",5662 }
-                                                    ,{"altirmidhi",3891 }
+                                                     {"abidawud", 4590 }
+                                                    ,{"darimi",3367 }
+                                                    ,{"nasai",5662 }
+                                                    ,{"tirmidhi",3891 }
                                                     ,{"bukhari",7008 }
-                                                    ,{"ibnhanbal",26363 }
+                                                    ,{"musnad",26363 }
                                                     ,{"ibnmaja",4332 }
                                                     ,{"muslim",5362 }
                                                     ,{"muwataa",1594}};
@@ -31,6 +31,9 @@ namespace The9Books.Controllers
             _dbContext = dbContext;
             _random = random;
         }
+
+        [Route("books")]
+        public async Task<ActionResult> Books() => Ok(HadithCount.Select(x => new { book = x.Key, total = x.Value }));
 
         [Route("{book}/{num}")]
         [ProducesResponseType(typeof(HadithDto), StatusCodes.Status200OK)]
