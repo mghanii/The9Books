@@ -20,6 +20,7 @@ namespace Tasaneef
         {
             services.AddControllers();
             services.AddDbContext<IDBContext, SQLiteDBContext>();
+            services.AddSingleton<IRandom, RandomGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -13,6 +13,7 @@ namespace Tasaneef.Controllers
     public class HadithController : ControllerBase
     {
         private readonly IDBContext _dbContext;
+        private readonly IRandom _random;
 
         private static readonly Dictionary<string, int> HadithCount = new Dictionary<string, int>{
                                                      {"abodawud", 4590 }
@@ -25,9 +26,10 @@ namespace Tasaneef.Controllers
                                                     ,{"muslim",5362 }
                                                     ,{"muwataa",1594}};
 
-        public HadithController(IDBContext dbContext)
+        public HadithController(IDBContext dbContext, IRandom random)
         {
             _dbContext = dbContext;
+            _random = random;
         }
 
         [Route("{book}/{num}")]
@@ -74,6 +76,25 @@ namespace Tasaneef.Controllers
             await Task.CompletedTask;
 
             return Ok(hadiths.Select(x => new HadithDto(x)));
+        }
+
+        [Route("random/{book?}")]
+        [ProducesResponseType(typeof(HadithDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<HadithDto>> Random(string book = "bukhari")
+        {
+            book = book.Trim().ToLower();
+
+            if (!HadithCount.TryGetValue(book, out var count)) return NotFound("Invalid book");
+
+            var hadithNumber = _random.RandPositive(count);
+
+            var hadith = _dbContext.Hadiths.FirstOrDefault(x => x.Book == book && x.Number == hadithNumber);
+
+            if (hadith == null) return NotFound();
+
+            await Task.CompletedTask;
+
+            return Ok(new HadithDto(hadith));
         }
     }
 }
