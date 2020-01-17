@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -13,15 +14,16 @@ namespace Tasaneef.Controllers
     {
         private readonly IDBContext _dbContext;
 
-        private static readonly string[] Books = {  "abodawud"
-                                                    ,"aldarimi"
-                                                    ,"alnasai"
-                                                    ,"altirmidhi"
-                                                    ,"bukhari"
-                                                    ,"ibnhanbal"
-                                                    ,"ibnmaja"
-                                                    ,"muslim"
-                                                    ,"muwataa"};
+        private static readonly Dictionary<string, int> HadithCount = new Dictionary<string, int>{
+                                                     {"abodawud", 4590 }
+                                                    ,{"aldarimi",3367 }
+                                                    ,{"alnasai",5662 }
+                                                    ,{"altirmidhi",3891 }
+                                                    ,{"bukhari",7008 }
+                                                    ,{"ibnhanbal",26363 }
+                                                    ,{"ibnmaja",4332 }
+                                                    ,{"muslim",5362 }
+                                                    ,{"muwataa",1594}};
 
         public HadithController(IDBContext dbContext)
         {
@@ -29,29 +31,33 @@ namespace Tasaneef.Controllers
         }
 
         [Route("{book}/{num}")]
-        [ProducesResponseType(typeof(Hadith), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Hadith>> Get(string book, int num)
+        [ProducesResponseType(typeof(HadithDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<HadithDto>> Get(string book, int num)
         {
-            book = book?.ToString().Trim();
+            book = book?.ToString().Trim().ToLower();
 
-            if (string.IsNullOrEmpty(book) || num <= 0) return base.BadRequest();
-            if (!Books.Contains(book.ToLower())) return NotFound("Invalid book");
+            if (string.IsNullOrEmpty(book) || num <= 0) return BadRequest();
+            if (!HadithCount.TryGetValue(book, out var count)) return NotFound("Invalid book");
+            if (num > count) return NotFound();
 
-            var hadith = _dbContext.Hadiths.FirstOrDefault(x => x.Book == book.ToLower() && x.Number == num);
+            var hadith = _dbContext.Hadiths.FirstOrDefault(x => x.Book == book && x.Number == num);
+
+            if (hadith == null) return NotFound();
 
             await Task.CompletedTask;
 
-            return Ok(hadith);
+            return Ok(new HadithDto(hadith));
         }
 
         [Route("{book}/{start}/{size}")]
-        [ProducesResponseType(typeof(Hadith), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Hadith>> List(string book, int start, int size)
+        [ProducesResponseType(typeof(IEnumerable<HadithDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<HadithDto>>> List(string book, int start, int size)
         {
             book = book?.ToString().Trim();
             if (string.IsNullOrEmpty(book)) return BadRequest();
 
-            if (!Books.Contains(book.ToLower())) return NotFound("Invalid book");
+            if (!HadithCount.TryGetValue(book, out var count)) return NotFound("Invalid book");
+            if (start > count) return NotFound();
 
             var maxSize = 50;
 
@@ -59,17 +65,15 @@ namespace Tasaneef.Controllers
             size = (size <= 0 || size > maxSize) ? maxSize : size;
 
             var hadiths = _dbContext.Hadiths
-                .Where(x => x.Book == book.ToLower())
+                .Where(x => x.Book == book)
                 .OrderBy(x => x.Number)
                 .Skip(start - 1)
                 .Take(size)
                 .ToList();
 
-            if (hadiths.Count() == 0) return NotFound();
-
             await Task.CompletedTask;
 
-            return Ok(hadiths);
+            return Ok(hadiths.Select(x => new HadithDto(x)));
         }
     }
 }
