@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Tasaneef.Models;
 
 namespace Tasaneef.Controllers
@@ -42,11 +42,11 @@ namespace Tasaneef.Controllers
             if (!HadithCount.TryGetValue(book, out var count)) return NotFound("Invalid book");
             if (num > count) return NotFound();
 
-            var hadith = _dbContext.Hadiths.FirstOrDefault(x => x.Book == book && x.Number == num);
+            var hadith = await _dbContext
+                .Hadiths
+                .FirstOrDefaultAsync(x => x.Book == book && x.Number == num);
 
             if (hadith == null) return NotFound();
-
-            await Task.CompletedTask;
 
             return Ok(new HadithDto(hadith));
         }
@@ -66,14 +66,12 @@ namespace Tasaneef.Controllers
             start = start <= 0 ? 1 : start;
             size = (size <= 0 || size > maxSize) ? maxSize : size;
 
-            var hadiths = _dbContext.Hadiths
+            var hadiths = await _dbContext.Hadiths
                 .Where(x => x.Book == book)
                 .OrderBy(x => x.Number)
                 .Skip(start - 1)
                 .Take(size)
-                .ToList();
-
-            await Task.CompletedTask;
+                .ToListAsync();
 
             return Ok(hadiths.Select(x => new HadithDto(x)));
         }
@@ -88,11 +86,11 @@ namespace Tasaneef.Controllers
 
             var hadithNumber = _random.RandPositive(count);
 
-            var hadith = _dbContext.Hadiths.FirstOrDefault(x => x.Book == book && x.Number == hadithNumber);
+            var hadith = await _dbContext
+                .Hadiths
+                .FirstOrDefaultAsync(x => x.Book == book && x.Number == hadithNumber);
 
             if (hadith == null) return NotFound();
-
-            await Task.CompletedTask;
 
             return Ok(new HadithDto(hadith));
         }
