@@ -16,8 +16,8 @@
 
 # Development
 
-* Extract database file from "src/Api/Data/SunnahDb.rar" in the same directory, it was compressed because it exceeded github file size limit. 
-`The original Hadith CSV files can be found in [Open-Hadith-Data](https://github.com/mhashim6/Open-Hadith-Data) repository.`
+* Extract database file from "src/Api/Data/SunnahDb.rar" in the same directory, it was compressed because it exceeded github file size limit. <br/>
+ <b>The original Hadith CSV files can be found in [Open-Hadith-Data](https://github.com/mhashim6/Open-Hadith-Data) repository.</b>
 * Api was built using Visual Studio Community 2019 Version 16.4.0, .net core 3.1, SQLite.
 * Download [SQLite & SQL Server Compact Toolbox extension](https://marketplace.visualstudio.com/items?itemName=ErikEJ.SQLServerCompactSQLiteToolbox) to access SQLite database from visual studio.
 
