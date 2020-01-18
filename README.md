@@ -38,7 +38,7 @@ Retrieves list of all books
 
 ### `GET /{bookId}/{hadithNumber}`
 Retrieves specific hadith from specific book.<br/>
-<b>book id can be obtained from end point `GET /books`</b>
+<b>book ids can be obtained from end point `GET /books`</b>
 
 ### `GET /{bookId}/{startHadithNumber}/{rangeSize}`
 Retrieves a range of hadiths from speific book starting from specific hadith.<br/>
