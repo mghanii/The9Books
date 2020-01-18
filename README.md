@@ -36,14 +36,15 @@ After running these commands you should be able to access api through port 5000
 ### `GET /books`
 Retrieves list of all books
 
-### `GET /{book}/{hadithNumber}`
-Retrieves specific hadith from specific book.
+### `GET /{bookId}/{hadithNumber}`
+Retrieves specific hadith from specific book.<br/>
+<b>book id can be obtained from end point `GET /books`</b>
 
-### `GET /{book}/{startHadithNumber}/{rangeSize}`
-Retrieves a range of hadiths starting from specific hadith.<br/>
+### `GET /{bookId}/{startHadithNumber}/{rangeSize}`
+Retrieves a range of hadiths from speific book starting from specific hadith.<br/>
 Maximum range size is 50.
 
-### `GET /random/{book?}`
+### `GET /random/{bookId?}`
 Retrieves a random hadith from specific book.<br/>
-If book isn't specified then default value is used (bukhari).
+If bookId isn't specified then default value is used (bukhari).
 

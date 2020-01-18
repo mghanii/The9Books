@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -14,17 +15,23 @@ namespace The9Books.Controllers
     {
         private readonly IDBContext _dbContext;
         private readonly IRandom _random;
+        private static readonly Book[] _books;
 
-        private static readonly Dictionary<string, int> HadithCount = new Dictionary<string, int>{
-                                                     {"abidawud", 4590 }
-                                                    ,{"darimi",3367 }
-                                                    ,{"nasai",5662 }
-                                                    ,{"tirmidhi",3891 }
-                                                    ,{"bukhari",7008 }
-                                                    ,{"musnad",26363 }
-                                                    ,{"ibnmaja",4332 }
-                                                    ,{"muslim",5362 }
-                                                    ,{"muwataa",1594}};
+        static HadithController()
+        {
+            _books = new[]
+            {
+                new Book("bukhari", "صحيح البخاري", "Sahih Bukhari", 7008),
+                new Book("muslim", "صحيح مسلم", "Sahih Muslim", 5362),
+                new Book("muwataa", "موطأ مالك", "Al Muwatta", 1594),
+                new Book("abidawud", "سنن أبي داود", "Sunan Abu Dawud", 4590),
+                new Book("ibnmaja", "سنن ابن ماجة", "Sunan Ibn Maja", 4332),
+                new Book("musnad", "مسند أحمد بن حنبل", "Musnad Ahmad ibn Hanbal", 26363),
+                new Book("tirmidhi", "سنن الترمذي", "Sunan al Tirmidhi", 3891),
+                new Book("nasai", "سنن النسائي", "Sunan al-Nasai", 5662),
+                new Book("darimi", "سنن الدارمي", "Sunan al Darimi", 3367),
+            };
+        }
 
         public HadithController(IDBContext dbContext, IRandom random)
         {
@@ -33,36 +40,38 @@ namespace The9Books.Controllers
         }
 
         [Route("books")]
-        public async Task<ActionResult> Books() => Ok(HadithCount.Select(x => new { book = x.Key, total = x.Value }));
+        public async Task<ActionResult> Books() => Ok(_books);
 
-        [Route("{book}/{num}")]
+        [Route("{bookId}/{num}")]
         [ProducesResponseType(typeof(HadithDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<HadithDto>> Get(string book, int num)
+        public async Task<ActionResult<HadithDto>> Get(string bookId, int num)
         {
-            book = book?.ToString().Trim().ToLower();
+            if (string.IsNullOrEmpty(bookId) || num <= 0) return BadRequest();
 
-            if (string.IsNullOrEmpty(book) || num <= 0) return BadRequest();
-            if (!HadithCount.TryGetValue(book, out var count)) return NotFound("Invalid book");
-            if (num > count) return NotFound();
+            var book = _books.FirstOrDefault(x => x.Id.Equals(bookId.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (book == null) return NotFound("Invalid bookId");
+            if (num > book.HadithCount) return NotFound();
 
             var hadith = await _dbContext
                 .Hadiths
-                .FirstOrDefaultAsync(x => x.Book == book && x.Number == num);
+                .FirstOrDefaultAsync(x => x.Book == book.Id && x.Number == num);
 
             if (hadith == null) return NotFound();
 
             return Ok(new HadithDto(hadith));
         }
 
-        [Route("{book}/{start}/{size}")]
+        [Route("{bookId}/{start}/{size}")]
         [ProducesResponseType(typeof(IEnumerable<HadithDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<HadithDto>>> List(string book, int start, int size)
+        public async Task<ActionResult<IEnumerable<HadithDto>>> List(string bookId, int start, int size)
         {
-            book = book?.ToString().Trim();
-            if (string.IsNullOrEmpty(book)) return BadRequest();
+            if (string.IsNullOrEmpty(bookId)) return BadRequest();
 
-            if (!HadithCount.TryGetValue(book, out var count)) return NotFound("Invalid book");
-            if (start > count) return NotFound();
+            var book = _books.FirstOrDefault(x => x.Id.Equals(bookId.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (book == null) return NotFound("Invalid bookId");
+            if (start > book.HadithCount) return NotFound();
 
             var maxSize = 50;
 
@@ -70,7 +79,7 @@ namespace The9Books.Controllers
             size = (size <= 0 || size > maxSize) ? maxSize : size;
 
             var hadiths = await _dbContext.Hadiths
-                .Where(x => x.Book == book)
+                .Where(x => x.Book == book.Id)
                 .OrderBy(x => x.Number)
                 .Skip(start - 1)
                 .Take(size)
@@ -79,21 +88,19 @@ namespace The9Books.Controllers
             return Ok(hadiths.Select(x => new HadithDto(x)));
         }
 
-        [Route("random/{book?}")]
+        [Route("random/{bookId?}")]
         [ProducesResponseType(typeof(HadithDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<HadithDto>> Random(string book = "bukhari")
+        public async Task<ActionResult<HadithDto>> Random(string bookId = "bukhari")
         {
-            book = book.Trim().ToLower();
+            var book = _books.FirstOrDefault(x => x.Id.Equals(bookId.Trim(), StringComparison.OrdinalIgnoreCase));
 
-            if (!HadithCount.TryGetValue(book, out var count)) return NotFound("Invalid book");
+            if (book == null) return NotFound("Invalid bookId");
 
-            var hadithNumber = _random.RandPositive(count);
+            var hadithNumber = _random.RandPositive(book.HadithCount);
 
             var hadith = await _dbContext
                 .Hadiths
-                .FirstOrDefaultAsync(x => x.Book == book && x.Number == hadithNumber);
-
-            if (hadith == null) return NotFound();
+                .FirstOrDefaultAsync(x => x.Book == book.Id && x.Number == hadithNumber);
 
             return Ok(new HadithDto(hadith));
         }
