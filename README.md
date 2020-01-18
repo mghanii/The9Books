@@ -21,6 +21,17 @@
 * Api was built using Visual Studio Community 2019 Version 16.4.0, .net core 3.1, SQLite.
 * Download [SQLite & SQL Server Compact Toolbox extension](https://marketplace.visualstudio.com/items?itemName=ErikEJ.SQLServerCompactSQLiteToolbox) to access SQLite database from visual studio.
 
+# Docker
+
+Extract database file from "src/Api/Data/SunnahDb.rar" in the same directory.
+ 
+Assuming your current working directory is where Dockerfile exists (src/api):
+ ```
+  docker build -t 9books/dev . 
+  docker run   -p 5000:80 --name 9hadithbooks 9books/dev
+ ```
+After running these commands you should be able to access api through port 5000
+
 # Routes
 ### `GET /books`
 Retrieves list of all books
