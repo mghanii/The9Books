@@ -43,7 +43,9 @@ Retrieves specific hadith from specific book.
 Retrieves a range of hadiths starting from specific hadith.<br/>
 Maximum range size is 50.
 
-### `GET /random/{book?}`
-Retrieves a random hadith from specific book.<br/>
-If book isn't specified then default value is used (bukhari).
+### `GET /random`
+Retrieves a random hadith from Sahih al-Bukhari.
+
+### `GET /random/{book}`
+Retrieves a random hadith from specific book.
 
