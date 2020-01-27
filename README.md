@@ -25,14 +25,14 @@ Open up Terminal and navigate to the directory where you want the project to liv
 
 Clone this repository:
 
-`git clone https://github.com/MohamedAbdelghani/The9Books.git`
+```git clone https://github.com/MohamedAbdelghani/The9Books.git```
 
 Extract database file from "src/Api/Data/SunnahDb.rar" in the same directory, it was compressed because it exceeded github file size limit. <br/>
 <b>The original Hadith CSV files can be found in [Open-Hadith-Data](https://github.com/mhashim6/Open-Hadith-Data) repository.</b> 
  
 Navigate to  api project:
 
-`cd The9Books/src/Api`
+```cd The9Books/src/Api```
 
 Ensure that Docker Desktop is up and running, then run the following commands:
 ```
