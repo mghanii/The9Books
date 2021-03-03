@@ -13,6 +13,6 @@ namespace The9Books
         public DbSet<Hadith> Hadiths { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=Data/SunnahDb.db");
+            => options.UseSqlite("Data Source=SunnahDb.db");
     }
 }
