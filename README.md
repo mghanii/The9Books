@@ -29,7 +29,7 @@ Clone this repository:
 git clone https://github.com/MohamedAbdelghani/The9Books.git
 ```
 
-Extract database file from "src/Api/Data/SunnahDb.rar" in the same directory, it was compressed because it exceeded github file size limit. <br/>
+Extract database file from "src/Api/SunnahDb.rar" in the same directory, it was compressed because it exceeded github file size limit. <br/>
 <b>The original Hadith CSV files can be found in [Open-Hadith-Data](https://github.com/mhashim6/Open-Hadith-Data) repository.</b> 
  
 Navigate to  api project:
